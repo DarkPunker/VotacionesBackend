@@ -20,9 +20,8 @@ namespace Votaciones.Data
         public int idpersona { get; set; }
         [ForeignKey("idpersona")]
         public Persona Persona { get; set; }
-
         public ICollection<Rol> Rol { get; set; }
-
+        public List<UsuarioRol> UsuarioRol { get; set; }
         public ICollection<Eleccion> Elecciones { get; set; }
         public List<Sufragante> Sufragante { get; set; }
     }

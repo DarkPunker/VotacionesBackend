@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Votaciones.Migrations
 {
-    public partial class DBInit : Migration
+    public partial class DbInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -153,7 +153,7 @@ namespace Votaciones.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Rol_has_permiso",
+                name: "RolHasPermiso",
                 columns: table => new
                 {
                     idrol = table.Column<int>(type: "int", nullable: false),
@@ -162,15 +162,15 @@ namespace Votaciones.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rol_has_permiso", x => new { x.idrol, x.idpermiso });
+                    table.PrimaryKey("PK_RolHasPermiso", x => new { x.idrol, x.idpermiso });
                     table.ForeignKey(
-                        name: "FK_Rol_has_permiso_Permiso_idpermiso",
+                        name: "FK_RolHasPermiso_Permiso_idpermiso",
                         column: x => x.idpermiso,
                         principalTable: "Permiso",
                         principalColumn: "idpermiso",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Rol_has_permiso_Rol_idrol",
+                        name: "FK_RolHasPermiso_Rol_idrol",
                         column: x => x.idrol,
                         principalTable: "Rol",
                         principalColumn: "idrol",
@@ -183,6 +183,7 @@ namespace Votaciones.Migrations
                 {
                     idpersona = table.Column<int>(type: "int", nullable: false),
                     idconvocatoria = table.Column<int>(type: "int", nullable: false),
+                    estado_participante = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     numero_participante = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -227,24 +228,24 @@ namespace Votaciones.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RolUsuario",
+                name: "UsuarioRol",
                 columns: table => new
                 {
-                    Rolidrol = table.Column<int>(type: "int", nullable: false),
-                    Usuarioidusuario = table.Column<int>(type: "int", nullable: false)
+                    idrol = table.Column<int>(type: "int", nullable: false),
+                    idusuario = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RolUsuario", x => new { x.Rolidrol, x.Usuarioidusuario });
+                    table.PrimaryKey("PK_UsuarioRol", x => new { x.idrol, x.idusuario });
                     table.ForeignKey(
-                        name: "FK_RolUsuario_Rol_Rolidrol",
-                        column: x => x.Rolidrol,
+                        name: "FK_UsuarioRol_Rol_idrol",
+                        column: x => x.idrol,
                         principalTable: "Rol",
                         principalColumn: "idrol",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RolUsuario_Usuario_Usuarioidusuario",
-                        column: x => x.Usuarioidusuario,
+                        name: "FK_UsuarioRol_Usuario_idusuario",
+                        column: x => x.idusuario,
                         principalTable: "Usuario",
                         principalColumn: "idusuario",
                         onDelete: ReferentialAction.Cascade);
@@ -358,14 +359,9 @@ namespace Votaciones.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rol_has_permiso_idpermiso",
-                table: "Rol_has_permiso",
+                name: "IX_RolHasPermiso_idpermiso",
+                table: "RolHasPermiso",
                 column: "idpermiso");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RolUsuario_Usuarioidusuario",
-                table: "RolUsuario",
-                column: "Usuarioidusuario");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sufragante_Candidatoidpersona_Candidatoidconvocatoria",
@@ -387,6 +383,11 @@ namespace Votaciones.Migrations
                 table: "Usuario",
                 column: "nombre_usuario",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioRol_idusuario",
+                table: "UsuarioRol",
+                column: "idusuario");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -398,13 +399,13 @@ namespace Votaciones.Migrations
                 name: "ConvocatoriaRequisito");
 
             migrationBuilder.DropTable(
-                name: "Rol_has_permiso");
-
-            migrationBuilder.DropTable(
-                name: "RolUsuario");
+                name: "RolHasPermiso");
 
             migrationBuilder.DropTable(
                 name: "Sufragante");
+
+            migrationBuilder.DropTable(
+                name: "UsuarioRol");
 
             migrationBuilder.DropTable(
                 name: "Requisito");
@@ -413,10 +414,10 @@ namespace Votaciones.Migrations
                 name: "Permiso");
 
             migrationBuilder.DropTable(
-                name: "Rol");
+                name: "Candidato");
 
             migrationBuilder.DropTable(
-                name: "Candidato");
+                name: "Rol");
 
             migrationBuilder.DropTable(
                 name: "Usuario");

@@ -32,6 +32,8 @@ namespace Votaciones
             services.AddDbContextPool<MyDBContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
             //services.AddDbContext<MyDBContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDbContext<MyDBContext>();
+            services.AddControllers().AddNewtonsoftJson(x =>
+            x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddControllers();
         }
 

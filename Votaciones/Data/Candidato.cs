@@ -4,6 +4,7 @@ namespace Votaciones.Data
 {
     public class Candidato
     {
+        public string estado_participante { get; set; }
         public int numero_participante { get; set; }
         public int idpersona { get; set; }
         public Persona Persona { get; set; }

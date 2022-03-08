@@ -9,8 +9,8 @@ using Votaciones.Data;
 namespace Votaciones.Migrations
 {
     [DbContext(typeof(MyDBContext))]
-    [Migration("20220212170701_DBInit")]
-    partial class DBInit
+    [Migration("20220307201858_DbInit")]
+    partial class DbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,21 +52,6 @@ namespace Votaciones.Migrations
                     b.ToTable("ConvocatoriaRequisito");
                 });
 
-            modelBuilder.Entity("RolUsuario", b =>
-                {
-                    b.Property<int>("Rolidrol")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Usuarioidusuario")
-                        .HasColumnType("int");
-
-                    b.HasKey("Rolidrol", "Usuarioidusuario");
-
-                    b.HasIndex("Usuarioidusuario");
-
-                    b.ToTable("RolUsuario");
-                });
-
             modelBuilder.Entity("Votaciones.Data.Candidato", b =>
                 {
                     b.Property<int>("idpersona")
@@ -74,6 +59,9 @@ namespace Votaciones.Migrations
 
                     b.Property<int>("idconvocatoria")
                         .HasColumnType("int");
+
+                    b.Property<string>("estado_participante")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("numero_participante")
                         .HasColumnType("int");
@@ -307,7 +295,7 @@ namespace Votaciones.Migrations
 
                     b.HasIndex("idpermiso");
 
-                    b.ToTable("Rol_has_permiso");
+                    b.ToTable("RolHasPermiso");
                 });
 
             modelBuilder.Entity("Votaciones.Data.Sufragante", b =>
@@ -371,6 +359,21 @@ namespace Votaciones.Migrations
                     b.ToTable("Usuario");
                 });
 
+            modelBuilder.Entity("Votaciones.Data.UsuarioRol", b =>
+                {
+                    b.Property<int>("idrol")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idusuario")
+                        .HasColumnType("int");
+
+                    b.HasKey("idrol", "idusuario");
+
+                    b.HasIndex("idusuario");
+
+                    b.ToTable("UsuarioRol");
+                });
+
             modelBuilder.Entity("CandidatoEleccion", b =>
                 {
                     b.HasOne("Votaciones.Data.Eleccion", null)
@@ -397,21 +400,6 @@ namespace Votaciones.Migrations
                     b.HasOne("Votaciones.Data.Requisito", null)
                         .WithMany()
                         .HasForeignKey("Requisitoidrequisito")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("RolUsuario", b =>
-                {
-                    b.HasOne("Votaciones.Data.Rol", null)
-                        .WithMany()
-                        .HasForeignKey("Rolidrol")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Votaciones.Data.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("Usuarioidusuario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -509,6 +497,25 @@ namespace Votaciones.Migrations
                     b.Navigation("Persona");
                 });
 
+            modelBuilder.Entity("Votaciones.Data.UsuarioRol", b =>
+                {
+                    b.HasOne("Votaciones.Data.Rol", "Rol")
+                        .WithMany("UsuarioRol")
+                        .HasForeignKey("idrol")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Votaciones.Data.Usuario", "Usuario")
+                        .WithMany("UsuarioRol")
+                        .HasForeignKey("idusuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Votaciones.Data.Candidato", b =>
                 {
                     b.Navigation("Sufragante");
@@ -546,11 +553,15 @@ namespace Votaciones.Migrations
             modelBuilder.Entity("Votaciones.Data.Rol", b =>
                 {
                     b.Navigation("Rol_has_permiso");
+
+                    b.Navigation("UsuarioRol");
                 });
 
             modelBuilder.Entity("Votaciones.Data.Usuario", b =>
                 {
                     b.Navigation("Sufragante");
+
+                    b.Navigation("UsuarioRol");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Votaciones.Data;
 
@@ -36,9 +37,18 @@ namespace Votaciones.Controllers
 
         // GET api/<EleccionController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Eleccion>> GetElection(int id)
         {
-            return "value";
+            try
+            {
+                var data = await _context.Eleccion.FindAsync(id);
+                if (data == null) return NotFound();
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST api/<EleccionController>/createeleccion
@@ -57,10 +67,29 @@ namespace Votaciones.Controllers
             }
         }
 
-        // PUT api/<EleccionController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public class ChangeElectionRequest
         {
+            [Required]
+            public int ideleccion { get; set; }
+            [Required]
+            public string nombre_eleccion { get; set; }
+            [Required]
+            public DateTime fecha_inicio { get; set; }
+            [Required]
+            public DateTime fecha_fin { get; set; }
+        }
+
+        // PUT api/<EleccionController>/5
+        [HttpPut("changeelection")]
+        public async Task<ActionResult<Eleccion>> PutElection([FromBody] ChangeElectionRequest request)
+        {
+
+            var data = await _context.Eleccion.FindAsync(request.ideleccion);
+            data.nombre_eleccion = request.nombre_eleccion;
+            data.fecha_inicio = request.fecha_inicio;
+            data.fecha_fin = data.fecha_fin;
+            await _context.SaveChangesAsync();
+            return new JsonResult(new { message = "Modificacion Exitosa" });
         }
 
         // DELETE api/<EleccionController>/5

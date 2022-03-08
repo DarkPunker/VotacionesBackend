@@ -18,5 +18,6 @@ namespace Votaciones.Data
         public ICollection<Permiso> Permiso { get; set; }
         public List<Rol_has_permiso> Rol_has_permiso { get; set; }
         public ICollection<Usuario> Usuario { get; set; }
+        public List<UsuarioRol> UsuarioRol { get; set; }
     }
 }

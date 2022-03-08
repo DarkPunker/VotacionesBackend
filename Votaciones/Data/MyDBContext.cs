@@ -18,6 +18,7 @@ namespace Votaciones.Data
         public DbSet<Cargo> Cargo { get; set; }
         public DbSet<Requisito> Requisito { get; set; }
         public DbSet<Rol_has_permiso> RolHasPermiso { get; set; }
+        public DbSet<UsuarioRol> UsuarioRol { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +56,23 @@ namespace Votaciones.Data
                 .HasIndex(u => u.nombre_usuario)
                 .IsUnique();
                 ;
+
+            modelBuilder.Entity<Usuario>()
+            .HasMany(p => p.Rol)
+            .WithMany(p => p.Usuario)
+            .UsingEntity<UsuarioRol>(
+                j => j
+                    .HasOne(pt => pt.Rol)
+                    .WithMany(t => t.UsuarioRol)
+                    .HasForeignKey(pt => pt.idrol),
+                j => j
+                    .HasOne(pt => pt.Usuario)
+                    .WithMany(p => p.UsuarioRol)
+                    .HasForeignKey(pt => pt.idusuario),
+                j =>
+                {
+                    j.HasKey(t => new { t.idrol, t.idusuario });
+                });
 
             modelBuilder.Entity<Usuario>()
                 .HasOne(p => p.Persona)
