@@ -181,14 +181,16 @@ namespace Votaciones.Migrations
                 name: "Candidato",
                 columns: table => new
                 {
-                    idpersona = table.Column<int>(type: "int", nullable: false),
-                    idconvocatoria = table.Column<int>(type: "int", nullable: false),
+                    idcandidato = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     estado_participante = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    numero_participante = table.Column<int>(type: "int", nullable: false)
+                    numero_participante = table.Column<int>(type: "int", nullable: false),
+                    idpersona = table.Column<int>(type: "int", nullable: false),
+                    idconvocatoria = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Candidato", x => new { x.idpersona, x.idconvocatoria });
+                    table.PrimaryKey("PK_Candidato", x => x.idcandidato);
                     table.ForeignKey(
                         name: "FK_Candidato_Convocatoria_idconvocatoria",
                         column: x => x.idconvocatoria,
@@ -204,24 +206,24 @@ namespace Votaciones.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ConvocatoriaRequisito",
+                name: "ConvocatoriaRequisitos",
                 columns: table => new
                 {
-                    Convocatoriaidconvocatoria = table.Column<int>(type: "int", nullable: false),
-                    Requisitoidrequisito = table.Column<int>(type: "int", nullable: false)
+                    idconvocatoria = table.Column<int>(type: "int", nullable: false),
+                    idrequisito = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ConvocatoriaRequisito", x => new { x.Convocatoriaidconvocatoria, x.Requisitoidrequisito });
+                    table.PrimaryKey("PK_ConvocatoriaRequisitos", x => new { x.idrequisito, x.idconvocatoria });
                     table.ForeignKey(
-                        name: "FK_ConvocatoriaRequisito_Convocatoria_Convocatoriaidconvocatoria",
-                        column: x => x.Convocatoriaidconvocatoria,
+                        name: "FK_ConvocatoriaRequisitos_Convocatoria_idconvocatoria",
+                        column: x => x.idconvocatoria,
                         principalTable: "Convocatoria",
                         principalColumn: "idconvocatoria",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ConvocatoriaRequisito_Requisito_Requisitoidrequisito",
-                        column: x => x.Requisitoidrequisito,
+                        name: "FK_ConvocatoriaRequisitos_Requisito_idrequisito",
+                        column: x => x.idrequisito,
                         principalTable: "Requisito",
                         principalColumn: "idrequisito",
                         onDelete: ReferentialAction.Cascade);
@@ -252,25 +254,24 @@ namespace Votaciones.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CandidatoEleccion",
+                name: "Ganador",
                 columns: table => new
                 {
-                    Eleccionideleccion = table.Column<int>(type: "int", nullable: false),
-                    Candidatoidpersona = table.Column<int>(type: "int", nullable: false),
-                    Candidatoidconvocatoria = table.Column<int>(type: "int", nullable: false)
+                    ideleccion = table.Column<int>(type: "int", nullable: false),
+                    idcandidato = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CandidatoEleccion", x => new { x.Eleccionideleccion, x.Candidatoidpersona, x.Candidatoidconvocatoria });
+                    table.PrimaryKey("PK_Ganador", x => new { x.ideleccion, x.idcandidato });
                     table.ForeignKey(
-                        name: "FK_CandidatoEleccion_Candidato_Candidatoidpersona_Candidatoidco~",
-                        columns: x => new { x.Candidatoidpersona, x.Candidatoidconvocatoria },
+                        name: "FK_Ganador_Candidato_idcandidato",
+                        column: x => x.idcandidato,
                         principalTable: "Candidato",
-                        principalColumns: new[] { "idpersona", "idconvocatoria" },
+                        principalColumn: "idcandidato",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CandidatoEleccion_Eleccion_Eleccionideleccion",
-                        column: x => x.Eleccionideleccion,
+                        name: "FK_Ganador_Eleccion_ideleccion",
+                        column: x => x.ideleccion,
                         principalTable: "Eleccion",
                         principalColumn: "ideleccion",
                         onDelete: ReferentialAction.Cascade);
@@ -283,17 +284,16 @@ namespace Votaciones.Migrations
                     idusuario = table.Column<int>(type: "int", nullable: false),
                     ideleccion = table.Column<int>(type: "int", nullable: false),
                     fecha_sufragio = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Candidatoidpersona = table.Column<int>(type: "int", nullable: true),
-                    Candidatoidconvocatoria = table.Column<int>(type: "int", nullable: true)
+                    Candidatoidcandidato = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sufragante", x => new { x.idusuario, x.ideleccion });
                     table.ForeignKey(
-                        name: "FK_Sufragante_Candidato_Candidatoidpersona_Candidatoidconvocato~",
-                        columns: x => new { x.Candidatoidpersona, x.Candidatoidconvocatoria },
+                        name: "FK_Sufragante_Candidato_Candidatoidcandidato",
+                        column: x => x.Candidatoidcandidato,
                         principalTable: "Candidato",
-                        principalColumns: new[] { "idpersona", "idconvocatoria" },
+                        principalColumn: "idcandidato",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Sufragante_Eleccion_ideleccion",
@@ -315,9 +315,9 @@ namespace Votaciones.Migrations
                 column: "idconvocatoria");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CandidatoEleccion_Candidatoidpersona_Candidatoidconvocatoria",
-                table: "CandidatoEleccion",
-                columns: new[] { "Candidatoidpersona", "Candidatoidconvocatoria" });
+                name: "IX_Candidato_idpersona",
+                table: "Candidato",
+                column: "idpersona");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cargo_nombre_cargo",
@@ -336,9 +336,14 @@ namespace Votaciones.Migrations
                 column: "ideleccion");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConvocatoriaRequisito_Requisitoidrequisito",
-                table: "ConvocatoriaRequisito",
-                column: "Requisitoidrequisito");
+                name: "IX_ConvocatoriaRequisitos_idconvocatoria",
+                table: "ConvocatoriaRequisitos",
+                column: "idconvocatoria");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ganador_idcandidato",
+                table: "Ganador",
+                column: "idcandidato");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Persona_numero_identificacion",
@@ -364,9 +369,9 @@ namespace Votaciones.Migrations
                 column: "idpermiso");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sufragante_Candidatoidpersona_Candidatoidconvocatoria",
+                name: "IX_Sufragante_Candidatoidcandidato",
                 table: "Sufragante",
-                columns: new[] { "Candidatoidpersona", "Candidatoidconvocatoria" });
+                column: "Candidatoidcandidato");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sufragante_ideleccion",
@@ -393,10 +398,10 @@ namespace Votaciones.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CandidatoEleccion");
+                name: "ConvocatoriaRequisitos");
 
             migrationBuilder.DropTable(
-                name: "ConvocatoriaRequisito");
+                name: "Ganador");
 
             migrationBuilder.DropTable(
                 name: "RolHasPermiso");

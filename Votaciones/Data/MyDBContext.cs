@@ -19,6 +19,12 @@ namespace Votaciones.Data
         public DbSet<Requisito> Requisito { get; set; }
         public DbSet<Rol_has_permiso> RolHasPermiso { get; set; }
         public DbSet<UsuarioRol> UsuarioRol { get; set; }
+        public DbSet<ConvocatoriaRequisito> ConvocatoriaRequisitos { get; set; }
+        public DbSet<Candidato> Candidato { get; set; }
+        public DbSet<Sufragante> Sufragante { get; set; }
+        public DbSet<Ganador> Ganador { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,6 +62,40 @@ namespace Votaciones.Data
                 .HasIndex(u => u.nombre_usuario)
                 .IsUnique();
                 ;
+
+            modelBuilder.Entity<Candidato>()
+            .HasMany(p => p.Eleccion)
+            .WithMany(p => p.Candidato)
+            .UsingEntity<Ganador>(
+                j => j
+                    .HasOne(pt => pt.Eleccion)
+                    .WithMany(t => t.Ganador)
+                    .HasForeignKey(pt => pt.ideleccion),
+                j => j
+                    .HasOne(pt => pt.Candidato)
+                    .WithMany(p => p.Ganador)
+                    .HasForeignKey(pt => pt.idcandidato),
+                j =>
+                {
+                    j.HasKey(t => new { t.ideleccion, t.idcandidato });
+                });
+
+            modelBuilder.Entity<Convocatoria>()
+            .HasMany(p => p.Requisito)
+            .WithMany(p => p.Convocatoria)
+            .UsingEntity<ConvocatoriaRequisito>(
+                j => j
+                    .HasOne(pt => pt.Requisito)
+                    .WithMany(t => t.ConvocatoriaRequisito)
+                    .HasForeignKey(pt => pt.idrequisito),
+                j => j
+                    .HasOne(pt => pt.Convocatoria)
+                    .WithMany(p => p.ConvocatoriaRequisito)
+                    .HasForeignKey(pt => pt.idconvocatoria),
+                j =>
+                {
+                    j.HasKey(t => new { t.idrequisito, t.idconvocatoria });
+                });
 
             modelBuilder.Entity<Usuario>()
             .HasMany(p => p.Rol)
@@ -129,24 +169,10 @@ namespace Votaciones.Data
                 .IsUnique();
             ;
 
-            modelBuilder.Entity<Persona>()
-            .HasMany(p => p.Convocatoria)
-            .WithMany(p => p.Persona)
-            .UsingEntity<Candidato>(
-                j => j
-                    .HasOne(pt => pt.Convocatoria)
-                    .WithMany(t => t.Candidato)
-                    .HasForeignKey(pt => pt.idconvocatoria),
-                j => j
-                    .HasOne(pt => pt.Persona)
-                    .WithMany(p => p.Candidato)
-                    .HasForeignKey(pt => pt.idpersona),
-                j =>
-                {
-                    j.HasKey(t => new { t.idpersona, t.idconvocatoria });
-                });
-
             
+            
+
+
         }
     }
 }

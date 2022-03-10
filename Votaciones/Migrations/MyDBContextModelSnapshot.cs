@@ -17,56 +17,29 @@ namespace Votaciones.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.0");
 
-            modelBuilder.Entity("CandidatoEleccion", b =>
-                {
-                    b.Property<int>("Eleccionideleccion")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Candidatoidpersona")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Candidatoidconvocatoria")
-                        .HasColumnType("int");
-
-                    b.HasKey("Eleccionideleccion", "Candidatoidpersona", "Candidatoidconvocatoria");
-
-                    b.HasIndex("Candidatoidpersona", "Candidatoidconvocatoria");
-
-                    b.ToTable("CandidatoEleccion");
-                });
-
-            modelBuilder.Entity("ConvocatoriaRequisito", b =>
-                {
-                    b.Property<int>("Convocatoriaidconvocatoria")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Requisitoidrequisito")
-                        .HasColumnType("int");
-
-                    b.HasKey("Convocatoriaidconvocatoria", "Requisitoidrequisito");
-
-                    b.HasIndex("Requisitoidrequisito");
-
-                    b.ToTable("ConvocatoriaRequisito");
-                });
-
             modelBuilder.Entity("Votaciones.Data.Candidato", b =>
                 {
-                    b.Property<int>("idpersona")
-                        .HasColumnType("int");
-
-                    b.Property<int>("idconvocatoria")
+                    b.Property<int>("idcandidato")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("estado_participante")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<int>("idconvocatoria")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idpersona")
+                        .HasColumnType("int");
+
                     b.Property<int>("numero_participante")
                         .HasColumnType("int");
 
-                    b.HasKey("idpersona", "idconvocatoria");
+                    b.HasKey("idcandidato");
 
                     b.HasIndex("idconvocatoria");
+
+                    b.HasIndex("idpersona");
 
                     b.ToTable("Candidato");
                 });
@@ -122,6 +95,21 @@ namespace Votaciones.Migrations
                     b.ToTable("Convocatoria");
                 });
 
+            modelBuilder.Entity("Votaciones.Data.ConvocatoriaRequisito", b =>
+                {
+                    b.Property<int>("idrequisito")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idconvocatoria")
+                        .HasColumnType("int");
+
+                    b.HasKey("idrequisito", "idconvocatoria");
+
+                    b.HasIndex("idconvocatoria");
+
+                    b.ToTable("ConvocatoriaRequisitos");
+                });
+
             modelBuilder.Entity("Votaciones.Data.Eleccion", b =>
                 {
                     b.Property<int>("ideleccion")
@@ -154,6 +142,21 @@ namespace Votaciones.Migrations
                     b.HasKey("ideleccion");
 
                     b.ToTable("Eleccion");
+                });
+
+            modelBuilder.Entity("Votaciones.Data.Ganador", b =>
+                {
+                    b.Property<int>("ideleccion")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idcandidato")
+                        .HasColumnType("int");
+
+                    b.HasKey("ideleccion", "idcandidato");
+
+                    b.HasIndex("idcandidato");
+
+                    b.ToTable("Ganador");
                 });
 
             modelBuilder.Entity("Votaciones.Data.Permiso", b =>
@@ -304,10 +307,7 @@ namespace Votaciones.Migrations
                     b.Property<int>("ideleccion")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Candidatoidconvocatoria")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Candidatoidpersona")
+                    b.Property<int?>("Candidatoidcandidato")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("fecha_sufragio")
@@ -315,9 +315,9 @@ namespace Votaciones.Migrations
 
                     b.HasKey("idusuario", "ideleccion");
 
-                    b.HasIndex("ideleccion");
+                    b.HasIndex("Candidatoidcandidato");
 
-                    b.HasIndex("Candidatoidpersona", "Candidatoidconvocatoria");
+                    b.HasIndex("ideleccion");
 
                     b.ToTable("Sufragante");
                 });
@@ -372,36 +372,6 @@ namespace Votaciones.Migrations
                     b.ToTable("UsuarioRol");
                 });
 
-            modelBuilder.Entity("CandidatoEleccion", b =>
-                {
-                    b.HasOne("Votaciones.Data.Eleccion", null)
-                        .WithMany()
-                        .HasForeignKey("Eleccionideleccion")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Votaciones.Data.Candidato", null)
-                        .WithMany()
-                        .HasForeignKey("Candidatoidpersona", "Candidatoidconvocatoria")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ConvocatoriaRequisito", b =>
-                {
-                    b.HasOne("Votaciones.Data.Convocatoria", null)
-                        .WithMany()
-                        .HasForeignKey("Convocatoriaidconvocatoria")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Votaciones.Data.Requisito", null)
-                        .WithMany()
-                        .HasForeignKey("Requisitoidrequisito")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Votaciones.Data.Candidato", b =>
                 {
                     b.HasOne("Votaciones.Data.Convocatoria", "Convocatoria")
@@ -440,6 +410,44 @@ namespace Votaciones.Migrations
                     b.Navigation("Eleccion");
                 });
 
+            modelBuilder.Entity("Votaciones.Data.ConvocatoriaRequisito", b =>
+                {
+                    b.HasOne("Votaciones.Data.Convocatoria", "Convocatoria")
+                        .WithMany("ConvocatoriaRequisito")
+                        .HasForeignKey("idconvocatoria")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Votaciones.Data.Requisito", "Requisito")
+                        .WithMany("ConvocatoriaRequisito")
+                        .HasForeignKey("idrequisito")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Convocatoria");
+
+                    b.Navigation("Requisito");
+                });
+
+            modelBuilder.Entity("Votaciones.Data.Ganador", b =>
+                {
+                    b.HasOne("Votaciones.Data.Candidato", "Candidato")
+                        .WithMany("Ganador")
+                        .HasForeignKey("idcandidato")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Votaciones.Data.Eleccion", "Eleccion")
+                        .WithMany("Ganador")
+                        .HasForeignKey("ideleccion")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Candidato");
+
+                    b.Navigation("Eleccion");
+                });
+
             modelBuilder.Entity("Votaciones.Data.Rol_has_permiso", b =>
                 {
                     b.HasOne("Votaciones.Data.Permiso", "Permiso")
@@ -461,6 +469,10 @@ namespace Votaciones.Migrations
 
             modelBuilder.Entity("Votaciones.Data.Sufragante", b =>
                 {
+                    b.HasOne("Votaciones.Data.Candidato", "Candidato")
+                        .WithMany("Sufragante")
+                        .HasForeignKey("Candidatoidcandidato");
+
                     b.HasOne("Votaciones.Data.Eleccion", "Eleccion")
                         .WithMany("Sufragante")
                         .HasForeignKey("ideleccion")
@@ -472,10 +484,6 @@ namespace Votaciones.Migrations
                         .HasForeignKey("idusuario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Votaciones.Data.Candidato", "Candidato")
-                        .WithMany("Sufragante")
-                        .HasForeignKey("Candidatoidpersona", "Candidatoidconvocatoria");
 
                     b.Navigation("Candidato");
 
@@ -516,6 +524,8 @@ namespace Votaciones.Migrations
 
             modelBuilder.Entity("Votaciones.Data.Candidato", b =>
                 {
+                    b.Navigation("Ganador");
+
                     b.Navigation("Sufragante");
                 });
 
@@ -527,11 +537,15 @@ namespace Votaciones.Migrations
             modelBuilder.Entity("Votaciones.Data.Convocatoria", b =>
                 {
                     b.Navigation("Candidato");
+
+                    b.Navigation("ConvocatoriaRequisito");
                 });
 
             modelBuilder.Entity("Votaciones.Data.Eleccion", b =>
                 {
                     b.Navigation("Convocatoria");
+
+                    b.Navigation("Ganador");
 
                     b.Navigation("Sufragante");
                 });
@@ -546,6 +560,11 @@ namespace Votaciones.Migrations
                     b.Navigation("Candidato");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Votaciones.Data.Requisito", b =>
+                {
+                    b.Navigation("ConvocatoriaRequisito");
                 });
 
             modelBuilder.Entity("Votaciones.Data.Rol", b =>

@@ -27,7 +27,6 @@ namespace Votaciones.Data
         public string direccion { get; set; }
 
         public List<Usuario> Usuario { get; set; }
-        public ICollection<Convocatoria> Convocatoria { get; set; }
         public List<Candidato> Candidato { get; set; }
     }
 }

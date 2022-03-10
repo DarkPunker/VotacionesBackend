@@ -21,8 +21,8 @@ namespace Votaciones.Data
         public int ideleccion { get; set; }
         [ForeignKey("ideleccion")]
         public Eleccion Eleccion { get; set; }
-        public ICollection<Persona> Persona { get; set; }
         public List<Candidato> Candidato { get; set; }
         public ICollection<Requisito> Requisito { get; set; }
+        public List<ConvocatoriaRequisito> ConvocatoriaRequisito { get; set; }
     }
 }

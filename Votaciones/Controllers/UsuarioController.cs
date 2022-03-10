@@ -191,7 +191,7 @@ namespace Votaciones.Controllers
 
             Usuario user = new Usuario();
             Persona pers = new Persona();
-
+            UsuarioRol usuarioRol = new UsuarioRol();
 
             try
             {
@@ -206,9 +206,13 @@ namespace Votaciones.Controllers
                 pers.direccion = request.direccion;
                 user.Persona = pers;
 
-
-                //_context.Usuario.Add(user);
-                //await _context.SaveChangesAsync();
+                _context.Usuario.Add(user);
+                await _context.SaveChangesAsync();
+                var id = user.idusuario;
+                usuarioRol.idusuario = id;
+                usuarioRol.idrol = datar.idrol;
+                _context.UsuarioRol.Add(usuarioRol);
+                await _context.SaveChangesAsync();
                 return new JsonResult(new { message = "Registro Exitoso" });
             }
             catch (Exception ex)

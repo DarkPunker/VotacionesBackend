@@ -28,6 +28,7 @@ namespace Votaciones.Data
         public ICollection<Usuario> Usuario { get; set; }
         public List<Sufragante> Sufragante { get; set; }
         public ICollection<Candidato> Candidato { get; set; }
+        public List<Ganador> Ganador { get; set; }
 
     }
 }

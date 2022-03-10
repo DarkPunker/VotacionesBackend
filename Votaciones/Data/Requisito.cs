@@ -11,6 +11,7 @@ namespace Votaciones.Data
         [Required]
         public string nombre_requisito { get; set; }
         public ICollection<Convocatoria> Convocatoria { get; set; }
+        public List<ConvocatoriaRequisito> ConvocatoriaRequisito { get; set; }
 
     }
 }
